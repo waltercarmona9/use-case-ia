@@ -1,11 +1,10 @@
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
 
 import React from 'react';
-import { Product, JournalArticle } from './types';
+import { Product, JournalArticle, Review } from './types';
 
 export const PRODUCTS: Product[] = [
   {
@@ -99,6 +98,41 @@ export const PRODUCTS: Product[] = [
     ],
     features: ['Latência Zero', 'Ponta Texturizada', 'Carregamento Sem Fio']
   }
+];
+
+export const INITIAL_REVIEWS: Review[] = [
+    {
+        id: 'r1',
+        productId: 'p1',
+        userName: 'Mariana S.',
+        rating: 5,
+        comment: 'A textura do material é incrível, muito diferente dos fones de plástico comuns. O som é realmente muito natural.',
+        date: '15 Mai 2025'
+    },
+    {
+        id: 'r2',
+        productId: 'p1',
+        userName: 'Carlos E.',
+        rating: 4,
+        comment: 'Excelente qualidade de construção. O cancelamento de ruído é suave, não dá aquela sensação de pressão no ouvido.',
+        date: '02 Jun 2025'
+    },
+    {
+        id: 'r3',
+        productId: 'p3',
+        userName: 'Fernanda L.',
+        rating: 5,
+        comment: 'A tela fosca mudou minha forma de trabalhar. Meus olhos agradecem! É como ler em papel de verdade.',
+        date: '10 Abr 2025'
+    },
+    {
+        id: 'r4',
+        productId: 'p5',
+        userName: 'João P.',
+        rating: 5,
+        comment: 'Design minimalista perfeito. A luz âmbar à noite cria uma atmosfera muito relaxante.',
+        date: '20 Mai 2025'
+    }
 ];
 
 export const JOURNAL_ARTICLES: JournalArticle[] = [

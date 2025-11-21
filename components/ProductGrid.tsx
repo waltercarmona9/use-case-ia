@@ -6,22 +6,32 @@
 
 import React, { useState, useMemo } from 'react';
 import { PRODUCTS } from '../constants';
-import { Product } from '../types';
+import { Product, Review } from '../types';
 import ProductCard from './ProductCard';
 
 const categories = ['Todos', 'Áudio', 'Vestíveis', 'Portáteis', 'Casa'];
 
 interface ProductGridProps {
   onProductClick: (product: Product) => void;
+  reviews: Review[];
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, reviews }) => {
   const [activeCategory, setActiveCategory] = useState('Todos');
 
   const filteredProducts = useMemo(() => {
     if (activeCategory === 'Todos') return PRODUCTS;
     return PRODUCTS.filter(p => p.category === activeCategory);
   }, [activeCategory]);
+
+  const getProductStats = (productId: string) => {
+    const productReviews = reviews.filter(r => r.productId === productId);
+    if (productReviews.length === 0) return { rating: 0, count: 0 };
+    
+    const sum = productReviews.reduce((acc, curr) => acc + curr.rating, 0);
+    const avg = sum / productReviews.length;
+    return { rating: avg, count: productReviews.length };
+  };
 
   return (
     <section id="products" className="py-32 px-6 md:px-12 bg-[#F5F2EB]">
@@ -51,9 +61,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick }) => {
 
         {/* Large Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
-          {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} onClick={onProductClick} />
-          ))}
+          {filteredProducts.map(product => {
+            const stats = getProductStats(product.id);
+            return (
+                <ProductCard 
+                    key={product.id} 
+                    product={product} 
+                    onClick={onProductClick} 
+                    rating={stats.rating}
+                    reviewCount={stats.count}
+                />
+            );
+          })}
         </div>
       </div>
     </section>

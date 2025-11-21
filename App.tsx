@@ -16,12 +16,14 @@ import ProductDetail from './components/ProductDetail';
 import JournalDetail from './components/JournalDetail';
 import CartDrawer from './components/CartDrawer';
 import Checkout from './components/Checkout';
-import { Product, JournalArticle, ViewState } from './types';
+import { Product, JournalArticle, ViewState, Review } from './types';
+import { INITIAL_REVIEWS } from './constants';
 
 function App() {
   const [view, setView] = useState<ViewState>({ type: 'home' });
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>(INITIAL_REVIEWS);
 
   // Handle navigation (clicks on Navbar or Footer links)
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -74,6 +76,16 @@ function App() {
     setCartItems(newItems);
   };
 
+  const handleAddReview = (productId: string, review: Omit<Review, 'id' | 'productId' | 'date'>) => {
+    const newReview: Review = {
+      id: `r${Date.now()}`,
+      productId,
+      date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+      ...review
+    };
+    setReviews(prev => [newReview, ...prev]);
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F2EB] font-sans text-[#2C2A26] selection:bg-[#D6D1C7] selection:text-[#2C2A26]">
       {view.type !== 'checkout' && (
@@ -88,10 +100,13 @@ function App() {
         {view.type === 'home' && (
           <>
             <Hero />
-            <ProductGrid onProductClick={(p) => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'product', product: p });
-            }} />
+            <ProductGrid 
+                reviews={reviews}
+                onProductClick={(p) => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setView({ type: 'product', product: p });
+                }} 
+            />
             <About />
             <Journal onArticleClick={(a) => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -103,11 +118,13 @@ function App() {
         {view.type === 'product' && (
           <ProductDetail 
             product={view.product} 
+            reviews={reviews.filter(r => r.productId === view.product.id)}
             onBack={() => {
               setView({ type: 'home' });
               setTimeout(() => scrollToSection('products'), 50);
             }}
             onAddToCart={addToCart}
+            onAddReview={handleAddReview}
           />
         )}
 
